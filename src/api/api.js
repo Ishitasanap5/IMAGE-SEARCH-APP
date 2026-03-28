@@ -9,7 +9,7 @@ export const fetchImages = async (query) => {
       key: API_KEY,
       q: query,
       image_type: "photo",
-      per_page: 20,
+      per_page:10,
     },
   });
   return res.data.hits;

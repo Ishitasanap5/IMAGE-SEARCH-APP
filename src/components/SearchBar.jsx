@@ -1,20 +1,21 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 
-export default function SearchBar({ onSearch }) {
+export default function SearchBar({ onSearch, loading }) {
   const [query, setQuery] = useState("");
 
-  const handleSearch = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (query.trim()) {
-      onSearch(query);
-    }
+
+    if (!query.trim() || loading) return;
+
+    onSearch(query);
   };
 
   return (
     <div className="flex justify-center mt-10 px-4">
       <form
-        onSubmit={handleSearch}
+        onSubmit={handleSubmit}
         className="flex items-center w-full max-w-2xl bg-white shadow-md rounded-full px-4 py-2 focus-within:ring-2 focus-within:ring-red-400 transition"
       >
         {/* Icon */}
@@ -29,23 +30,13 @@ export default function SearchBar({ onSearch }) {
           onChange={(e) => setQuery(e.target.value)}
         />
 
-        {/* Clear Button */}
-        {query && (
-          <button
-            type="button"
-            onClick={() => setQuery("")}
-            className="text-gray-400 hover:text-black px-2 text-lg"
-          >
-            ✕
-          </button>
-        )}
-
-        {/* Search Button */}
+        {/* Button*/}
         <button
           type="submit"
-          className="ml-2 bg-red-500 text-white px-4 py-2 rounded-full text-sm hover:bg-red-600 transition"
+          disabled={loading || !query.trim()}
+          className="ml-2 bg-red-500 text-white px-4 py-2 rounded-full text-sm hover:bg-red-600 transition disabled:bg-gray-400"
         >
-          Search
+          {loading ? "Searching..." : "Search"}
         </button>
       </form>
     </div>

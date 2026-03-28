@@ -1,15 +1,36 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Search } from "lucide-react";
 
 export default function SearchBar({ onSearch, loading }) {
   const [query, setQuery] = useState("");
 
+  // debounce function
+  const debounce = (fn, delay) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn(...args), delay);
+    };
+  };
+
+  // useRef to persist debounced function
+  const debouncedSearch = useRef(
+    debounce((val) => {
+      if (val.trim()) onSearch(val);
+    }, 500)
+  ).current;
+
+  // handle input changes
+  const handleInputChange = (e) => {
+    setQuery(e.target.value);
+    debouncedSearch(e.target.value);
+  };
+
+  // optional: handle search button click
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (!query.trim() || loading) return;
-
-    onSearch(query);
+    onSearch(query); // immediate search on button click
   };
 
   return (
@@ -18,19 +39,16 @@ export default function SearchBar({ onSearch, loading }) {
         onSubmit={handleSubmit}
         className="flex items-center w-full max-w-2xl bg-white shadow-md rounded-full px-4 py-2 focus-within:ring-2 focus-within:ring-red-400 transition"
       >
-        {/* Icon */}
         <Search className="text-gray-400 mr-2" size={20} />
 
-        {/* Input */}
         <input
           type="text"
           placeholder="Search beautiful images..."
           className="flex-1 outline-none text-sm"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleInputChange} // <-- use debounce here
         />
 
-        {/* Button*/}
         <button
           type="submit"
           disabled={loading || !query.trim()}

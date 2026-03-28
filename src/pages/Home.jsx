@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
 import {fetchImages} from "../api/api.js"
+import ImageGrid from "../components/ImageGrid"; 
 
 export default function Home() {
   const [images, setImages] = useState([]);
@@ -19,7 +20,7 @@ export default function Home() {
       <div className="mt-6">
         <SearchBar onSearch={handleSearch} />
       </div>
-
+    <ImageGrid images={images} />
       
     </div>
   );
